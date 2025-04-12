@@ -130,14 +130,15 @@ const CreateInvoiceForm: React.FC<CreateInvoiceFormProps> = ({ open, onClose, on
       id: `INV-${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}`,
       invoiceNumber: `INV-${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}`,
       client: selectedClient,
+      clientId: selectedClient.id,
       date: new Date().toISOString(),
       dueDate: new Date(dueDate).toISOString(),
       items: invoiceItems.map(item => ({
         id: item.id,
-        name: products.find(p => p.id === item.productId)?.name || "",
+        productId: item.productId,
         description: item.description,
         quantity: item.quantity,
-        price: item.unitPrice,
+        unitPrice: item.unitPrice,
         total: item.total
       })),
       subtotal: calculateSubtotal(),
