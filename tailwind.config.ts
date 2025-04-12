@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,6 +62,19 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				textile: {
+					"50": "#f0f7ff",
+					"100": "#e0effe",
+					"200": "#bae0fd",
+					"300": "#7ec4fa",
+					"400": "#3aa3f5",
+					"500": "#1283e7",
+					"600": "#0668d4",
+					"700": "#0552ab",
+					"800": "#06468c",
+					"900": "#0c3c74",
+					"950": "#07254a"
 				}
 			},
 			borderRadius: {
@@ -89,6 +103,9 @@ export default {
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out'
+			},
+			backgroundImage: {
+				'textile-pattern': "url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgdmlld0JveD0iMCAwIDYwIDYwIj48cGF0aCBkPSJNMzAgMHYxMEw1MCAyMGwxMC0xMEwzMCAwem0yMCAyMEw2MCAzMEg1MEw0MCAyMGgtMTB2MTBIMHY0MGg2MFYzMEw1MCAyMHptMCAxMGwtMTAgMTB2LTEwaDEwek0zMCA2MEgwVjQwSDMwdjIweiIgb3BhY2l0eT0iLjAzIi8+PC9zdmc+')"
 			}
 		}
 	},
