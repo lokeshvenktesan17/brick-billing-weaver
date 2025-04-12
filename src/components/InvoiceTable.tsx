@@ -35,7 +35,7 @@ const InvoiceTable: React.FC<InvoiceTableProps> = ({ invoices }) => {
               <TableCell>{format(new Date(invoice.date), "MMM d, yyyy")}</TableCell>
               <TableCell>{format(new Date(invoice.dueDate), "MMM d, yyyy")}</TableCell>
               <TableCell className="text-right">
-                ${invoice.total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                ₹{invoice.total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </TableCell>
               <TableCell>
                 <Badge 

@@ -12,7 +12,7 @@ const DashboardStats = () => {
   const statCards = [
     {
       title: "Total Revenue",
-      value: `$${stats.totalRevenue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+      value: `₹${stats.totalRevenue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
       icon: <CircleDollarSign className="h-6 w-6 text-emerald-500" />,
       change: "+12.5% from last month",
       changeType: "positive" as ChangeType,
@@ -20,13 +20,13 @@ const DashboardStats = () => {
     {
       title: "Pending Invoices",
       value: `${stats.invoicesByStatus.pending}`,
-      subValue: `$${stats.pendingRevenue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+      subValue: `₹${stats.pendingRevenue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
       icon: <Clock className="h-6 w-6 text-amber-500" />,
     },
     {
       title: "Overdue Invoices",
       value: `${stats.invoicesByStatus.overdue}`,
-      subValue: `$${stats.overdueRevenue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+      subValue: `₹${stats.overdueRevenue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
       icon: <AlertTriangle className="h-6 w-6 text-red-500" />,
     },
     {

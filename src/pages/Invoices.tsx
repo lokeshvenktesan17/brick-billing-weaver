@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { PlusCircle, Search } from "lucide-react";
 import InvoiceTable from "@/components/InvoiceTable";
@@ -7,8 +7,11 @@ import { invoices } from "@/utils/mockData";
 import { Input } from "@/components/ui/input";
 import Navbar from "@/components/Layout/Navbar";
 import { Card } from "@/components/ui/card";
+import CreateInvoiceForm from "@/components/InvoiceForm/CreateInvoiceForm";
 
 const Invoices = () => {
+  const [isCreateInvoiceOpen, setIsCreateInvoiceOpen] = useState(false);
+
   return (
     <div className="flex min-h-screen bg-gray-50">
       <Navbar />
@@ -18,7 +21,10 @@ const Invoices = () => {
             <h1 className="text-3xl font-bold">Invoices</h1>
             <p className="text-muted-foreground">Manage your invoices and track payments.</p>
           </div>
-          <Button className="bg-textile-600 hover:bg-textile-700">
+          <Button 
+            className="bg-textile-600 hover:bg-textile-700"
+            onClick={() => setIsCreateInvoiceOpen(true)}
+          >
             <PlusCircle className="mr-2 h-4 w-4" /> Create Invoice
           </Button>
         </div>
@@ -40,6 +46,11 @@ const Invoices = () => {
         </Card>
         
         <InvoiceTable invoices={invoices} />
+
+        <CreateInvoiceForm
+          open={isCreateInvoiceOpen}
+          onClose={() => setIsCreateInvoiceOpen(false)}
+        />
       </main>
     </div>
   );

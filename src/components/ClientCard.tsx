@@ -41,11 +41,11 @@ const ClientCard: React.FC<ClientCardProps> = ({ client }) => {
         <div className="grid grid-cols-2 gap-4 mt-4 text-center">
           <div>
             <p className="text-muted-foreground text-xs">Outstanding</p>
-            <p className="font-semibold text-amber-600">${client.outstandingAmount.toLocaleString()}</p>
+            <p className="font-semibold text-amber-600">₹{client.outstandingAmount.toLocaleString()}</p>
           </div>
           <div>
             <p className="text-muted-foreground text-xs">Total Billed</p>
-            <p className="font-semibold">${client.totalBilled.toLocaleString()}</p>
+            <p className="font-semibold">₹{client.totalBilled.toLocaleString()}</p>
           </div>
         </div>
       </CardContent>

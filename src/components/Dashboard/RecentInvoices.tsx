@@ -39,7 +39,7 @@ const RecentInvoices = () => {
               <div className="flex items-center gap-4">
                 <div className="text-right">
                   <div className="font-medium">
-                    ${invoice.total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    ₹{invoice.total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </div>
                   <div className="text-sm text-muted-foreground">
                     {format(new Date(invoice.date), "MMM d, yyyy")}
