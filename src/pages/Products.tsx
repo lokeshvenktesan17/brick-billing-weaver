@@ -1,15 +1,31 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { PlusCircle, Search } from "lucide-react";
 import Navbar from "@/components/Layout/Navbar";
 import { Input } from "@/components/ui/input";
-import { products } from "@/utils/mockData";
+import { products as mockProducts } from "@/utils/mockData";
 import { Card } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import CreateProductForm from "@/components/ProductForm/CreateProductForm";
+import { Product } from "@/utils/mockData";
+import { useToast } from "@/hooks/use-toast";
 
 const Products = () => {
+  const [isCreateProductOpen, setIsCreateProductOpen] = useState(false);
+  const [products, setProducts] = useState(mockProducts);
+  const { toast } = useToast();
+
+  const handleCreateProduct = (newProduct: Product) => {
+    setProducts((prevProducts) => [newProduct, ...prevProducts]);
+    toast({
+      title: "Product Created",
+      description: "Product has been successfully added.",
+    });
+    setIsCreateProductOpen(false);
+  };
+
   return (
     <div className="flex min-h-screen bg-gray-50">
       <Navbar />
@@ -19,7 +35,10 @@ const Products = () => {
             <h1 className="text-3xl font-bold">Products</h1>
             <p className="text-muted-foreground">Manage your textile products and inventory.</p>
           </div>
-          <Button className="bg-textile-600 hover:bg-textile-700">
+          <Button 
+            className="bg-textile-600 hover:bg-textile-700"
+            onClick={() => setIsCreateProductOpen(true)}
+          >
             <PlusCircle className="mr-2 h-4 w-4" /> Add Product
           </Button>
         </div>
@@ -75,6 +94,12 @@ const Products = () => {
             </TableBody>
           </Table>
         </Card>
+
+        <CreateProductForm
+          open={isCreateProductOpen}
+          onClose={() => setIsCreateProductOpen(false)}
+          onCreateProduct={handleCreateProduct}
+        />
       </main>
     </div>
   );
