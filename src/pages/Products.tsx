@@ -1,7 +1,7 @@
 
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, Search } from "lucide-react";
+import { PlusCircle, Search, Pencil, Trash2 } from "lucide-react";
 import Navbar from "@/components/Layout/Navbar";
 import { Input } from "@/components/ui/input";
 import { products as mockProducts } from "@/utils/mockData";
@@ -9,12 +9,29 @@ import { Card } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import CreateProductForm from "@/components/ProductForm/CreateProductForm";
+import EditProductForm from "@/components/ProductForm/EditProductForm";
 import { Product } from "@/utils/mockData";
 import { useToast } from "@/hooks/use-toast";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+
+// Exchange rate: $1 = ₹75 (approximation)
+const EXCHANGE_RATE = 75;
 
 const Products = () => {
   const [isCreateProductOpen, setIsCreateProductOpen] = useState(false);
+  const [isEditProductOpen, setIsEditProductOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [products, setProducts] = useState(mockProducts);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const { toast } = useToast();
 
   const handleCreateProduct = (newProduct: Product) => {
@@ -24,6 +41,44 @@ const Products = () => {
       description: "Product has been successfully added.",
     });
     setIsCreateProductOpen(false);
+  };
+
+  const handleEditProduct = (updatedProduct: Product) => {
+    setProducts((prevProducts) =>
+      prevProducts.map((product) =>
+        product.id === updatedProduct.id ? updatedProduct : product
+      )
+    );
+    toast({
+      title: "Product Updated",
+      description: "Product has been successfully updated.",
+    });
+    setIsEditProductOpen(false);
+    setSelectedProduct(null);
+  };
+
+  const handleDeleteProduct = () => {
+    if (selectedProduct) {
+      setProducts((prevProducts) =>
+        prevProducts.filter((product) => product.id !== selectedProduct.id)
+      );
+      toast({
+        title: "Product Deleted",
+        description: "Product has been successfully removed.",
+      });
+      setIsDeleteDialogOpen(false);
+      setSelectedProduct(null);
+    }
+  };
+
+  const openEditDialog = (product: Product) => {
+    setSelectedProduct(product);
+    setIsEditProductOpen(true);
+  };
+
+  const openDeleteDialog = (product: Product) => {
+    setSelectedProduct(product);
+    setIsDeleteDialogOpen(true);
   };
 
   return (
@@ -69,6 +124,7 @@ const Products = () => {
                 <TableHead>Price</TableHead>
                 <TableHead>In Stock</TableHead>
                 <TableHead>Category</TableHead>
+                <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -77,7 +133,7 @@ const Products = () => {
                   <TableCell className="font-medium">{product.name}</TableCell>
                   <TableCell>{product.description}</TableCell>
                   <TableCell>{product.sku}</TableCell>
-                  <TableCell>${product.price.toFixed(2)} / {product.unit}</TableCell>
+                  <TableCell>₹{(product.price * EXCHANGE_RATE).toFixed(2)} / {product.unit}</TableCell>
                   <TableCell>
                     {product.inStock} {product.unit}s
                     {product.inStock < 100 && (
@@ -88,6 +144,24 @@ const Products = () => {
                   </TableCell>
                   <TableCell>
                     <Badge variant="secondary">{product.category}</Badge>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex gap-2">
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        onClick={() => openEditDialog(product)}
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        onClick={() => openDeleteDialog(product)}
+                      >
+                        <Trash2 className="h-4 w-4 text-red-500" />
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}
@@ -100,6 +174,36 @@ const Products = () => {
           onClose={() => setIsCreateProductOpen(false)}
           onCreateProduct={handleCreateProduct}
         />
+        
+        {selectedProduct && (
+          <EditProductForm
+            open={isEditProductOpen}
+            product={selectedProduct}
+            onClose={() => {
+              setIsEditProductOpen(false);
+              setSelectedProduct(null);
+            }}
+            onUpdateProduct={handleEditProduct}
+          />
+        )}
+
+        <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. This will permanently delete the product
+                "{selectedProduct?.name}" from your database.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel onClick={() => setSelectedProduct(null)}>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={handleDeleteProduct} className="bg-red-600 hover:bg-red-700">
+                Delete
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </main>
     </div>
   );

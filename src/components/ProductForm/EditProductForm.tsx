@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -24,23 +24,25 @@ import { Product } from "@/utils/mockData";
 // Exchange rate: $1 = ₹75 (approximation)
 const EXCHANGE_RATE = 75;
 
-interface CreateProductFormProps {
+interface EditProductFormProps {
   open: boolean;
+  product: Product;
   onClose: () => void;
-  onCreateProduct: (product: Product) => void;
+  onUpdateProduct: (product: Product) => void;
 }
 
-const CreateProductForm: React.FC<CreateProductFormProps> = ({ 
+const EditProductForm: React.FC<EditProductFormProps> = ({ 
   open, 
+  product,
   onClose, 
-  onCreateProduct 
+  onUpdateProduct 
 }) => {
   const { toast } = useToast();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [sku, setSku] = useState("");
   const [price, setPrice] = useState("");
-  const [unit, setUnit] = useState("meter"); // Changed default from yard to meter
+  const [unit, setUnit] = useState("meter");
   const [inStock, setInStock] = useState("");
   const [category, setCategory] = useState("");
   
@@ -52,6 +54,20 @@ const CreateProductForm: React.FC<CreateProductFormProps> = ({
     "Cotton Blends",
     "Other"
   ];
+
+  // Initialize form with product data
+  useEffect(() => {
+    if (product) {
+      setName(product.name);
+      setDescription(product.description);
+      setSku(product.sku);
+      // Convert price to rupees for display
+      setPrice(((product.price * EXCHANGE_RATE)).toFixed(2));
+      setUnit(product.unit);
+      setInStock(String(product.inStock));
+      setCategory(product.category);
+    }
+  }, [product]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,7 +83,7 @@ const CreateProductForm: React.FC<CreateProductFormProps> = ({
     }
 
     // Validate numeric values
-    // Convert price from rupees to dollars for storage
+    // Convert price from rupees to dollars when saving
     const priceValue = parseFloat(price) / EXCHANGE_RATE;
     const stockValue = parseInt(inStock);
     
@@ -89,15 +105,12 @@ const CreateProductForm: React.FC<CreateProductFormProps> = ({
       return;
     }
 
-    // Generate unique SKU if not provided
-    const productSku = sku || generateSku(name, category);
-
-    // Create new product
-    const newProduct: Product = {
-      id: `p${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}`,
+    // Update product
+    const updatedProduct: Product = {
+      ...product,
       name,
       description,
-      sku: productSku,
+      sku,
       price: priceValue,
       unit,
       inStock: stockValue,
@@ -105,32 +118,7 @@ const CreateProductForm: React.FC<CreateProductFormProps> = ({
     };
 
     // Call the parent component's handler
-    onCreateProduct(newProduct);
-    toast({
-      title: "Product Created",
-      description: "New product has been successfully added.",
-    });
-    
-    // Reset form and close
-    resetForm();
-    onClose();
-  };
-
-  const generateSku = (productName: string, productCategory: string) => {
-    const namePrefix = productName.substring(0, 3).toUpperCase();
-    const catPrefix = productCategory ? productCategory.substring(0, 3).toUpperCase() : "OTH";
-    const randomNum = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
-    return `${namePrefix}-${catPrefix}-${randomNum}`;
-  };
-
-  const resetForm = () => {
-    setName("");
-    setDescription("");
-    setSku("");
-    setPrice("");
-    setUnit("meter"); // Changed default from yard to meter
-    setInStock("");
-    setCategory("");
+    onUpdateProduct(updatedProduct);
   };
 
   return (
@@ -138,9 +126,9 @@ const CreateProductForm: React.FC<CreateProductFormProps> = ({
       <SheetContent className="sm:max-w-md overflow-y-auto">
         <form onSubmit={handleSubmit}>
           <SheetHeader className="mb-6">
-            <SheetTitle>Add New Product</SheetTitle>
+            <SheetTitle>Edit Product</SheetTitle>
             <SheetDescription>
-              Fill in the product details. Required fields are marked with an asterisk (*).
+              Update the product details. Required fields are marked with an asterisk (*).
             </SheetDescription>
           </SheetHeader>
 
@@ -199,7 +187,7 @@ const CreateProductForm: React.FC<CreateProductFormProps> = ({
                 id="sku"
                 value={sku}
                 onChange={(e) => setSku(e.target.value)}
-                placeholder="Product SKU (generated if left blank)"
+                placeholder="Product SKU"
               />
             </div>
 
@@ -233,7 +221,7 @@ const CreateProductForm: React.FC<CreateProductFormProps> = ({
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit">Add Product</Button>
+            <Button type="submit">Save Changes</Button>
           </SheetFooter>
         </form>
       </SheetContent>
@@ -241,4 +229,4 @@ const CreateProductForm: React.FC<CreateProductFormProps> = ({
   );
 };
 
-export default CreateProductForm;
+export default EditProductForm;
