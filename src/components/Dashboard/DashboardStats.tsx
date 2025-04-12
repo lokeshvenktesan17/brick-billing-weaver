@@ -4,6 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CircleDollarSign, Clock, FileText, AlertTriangle } from "lucide-react";
 import { getStats } from "@/utils/mockData";
 
+type ChangeType = "positive" | "negative" | "neutral";
+
 const DashboardStats = () => {
   const stats = getStats();
 
@@ -13,7 +15,7 @@ const DashboardStats = () => {
       value: `$${stats.totalRevenue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
       icon: <CircleDollarSign className="h-6 w-6 text-emerald-500" />,
       change: "+12.5% from last month",
-      changeType: "positive" as const,
+      changeType: "positive" as ChangeType,
     },
     {
       title: "Pending Invoices",
@@ -32,7 +34,7 @@ const DashboardStats = () => {
       value: `${stats.totalInvoices}`,
       icon: <FileText className="h-6 w-6 text-blue-500" />,
       change: "+2 from last week",
-      changeType: "neutral" as const,
+      changeType: "neutral" as ChangeType,
     },
   ];
 
