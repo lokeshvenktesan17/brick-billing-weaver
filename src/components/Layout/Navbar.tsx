@@ -4,8 +4,21 @@ import { Link, useLocation } from "react-router-dom";
 import { Building2, FileText, Home, LayoutDashboard, Package2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+/**
+ * Safely gets the current pathname, handling cases where useLocation might not be available
+ */
+const useActivePath = () => {
+  try {
+    const location = useLocation();
+    return location.pathname;
+  } catch (error) {
+    // Return a default path if not in router context
+    return "/";
+  }
+};
+
 const Navbar = () => {
-  const location = useLocation();
+  const currentPath = useActivePath();
   
   const navItems = [
     { name: "Dashboard", path: "/", icon: <LayoutDashboard className="h-5 w-5" /> },
@@ -31,7 +44,7 @@ const Navbar = () => {
                 to={item.path}
                 className={cn(
                   "flex items-center px-4 py-3 rounded-md transition-colors",
-                  location.pathname === item.path
+                  currentPath === item.path
                     ? "bg-white/20 font-medium"
                     : "hover:bg-white/10"
                 )}
