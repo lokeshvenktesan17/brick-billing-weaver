@@ -3,14 +3,27 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { PlusCircle, Search } from "lucide-react";
 import InvoiceTable from "@/components/InvoiceTable";
-import { invoices } from "@/utils/mockData";
+import { invoices as mockInvoices } from "@/utils/mockData";
 import { Input } from "@/components/ui/input";
 import Navbar from "@/components/Layout/Navbar";
 import { Card } from "@/components/ui/card";
 import CreateInvoiceForm from "@/components/InvoiceForm/CreateInvoiceForm";
+import { useToast } from "@/hooks/use-toast";
+import { Invoice } from "@/utils/mockData";
 
 const Invoices = () => {
   const [isCreateInvoiceOpen, setIsCreateInvoiceOpen] = useState(false);
+  const [invoices, setInvoices] = useState(mockInvoices);
+  const { toast } = useToast();
+
+  const handleCreateInvoice = (newInvoice: Invoice) => {
+    setInvoices((prevInvoices) => [newInvoice, ...prevInvoices]);
+    toast({
+      title: "Invoice Created",
+      description: "Invoice has been successfully created.",
+    });
+    setIsCreateInvoiceOpen(false);
+  };
 
   return (
     <div className="flex min-h-screen bg-gray-50">
@@ -50,6 +63,7 @@ const Invoices = () => {
         <CreateInvoiceForm
           open={isCreateInvoiceOpen}
           onClose={() => setIsCreateInvoiceOpen(false)}
+          onCreateInvoice={handleCreateInvoice}
         />
       </main>
     </div>

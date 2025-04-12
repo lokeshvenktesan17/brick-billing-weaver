@@ -23,13 +23,15 @@ import { Separator } from "@/components/ui/separator";
 import { Plus, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { clients, products } from "@/utils/mockData";
+import { Invoice } from "@/utils/mockData";
 
 interface CreateInvoiceFormProps {
   open: boolean;
   onClose: () => void;
+  onCreateInvoice: (invoice: Invoice) => void;
 }
 
-const CreateInvoiceForm: React.FC<CreateInvoiceFormProps> = ({ open, onClose }) => {
+const CreateInvoiceForm: React.FC<CreateInvoiceFormProps> = ({ open, onClose, onCreateInvoice }) => {
   const { toast } = useToast();
   const [selectedClientId, setSelectedClientId] = useState("");
   const [invoiceItems, setInvoiceItems] = useState([
@@ -101,14 +103,58 @@ const CreateInvoiceForm: React.FC<CreateInvoiceFormProps> = ({ open, onClose }) 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Here you would typically send the data to your backend
-    // For now, we'll just show a success message
-    toast({
-      title: "Invoice Created",
-      description: "Your invoice has been created successfully.",
-    });
+    // Validate form
+    if (!selectedClientId) {
+      toast({
+        title: "Error",
+        description: "Please select a client.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (invoiceItems.some(item => !item.productId)) {
+      toast({
+        title: "Error",
+        description: "Please select a product for all items.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Create new invoice
+    const selectedClient = clients.find(client => client.id === selectedClientId);
+    if (!selectedClient) return;
+
+    const newInvoice: Invoice = {
+      id: `INV-${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}`,
+      invoiceNumber: `INV-${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}`,
+      client: selectedClient,
+      date: new Date().toISOString(),
+      dueDate: new Date(dueDate).toISOString(),
+      items: invoiceItems.map(item => ({
+        id: item.id,
+        name: products.find(p => p.id === item.productId)?.name || "",
+        description: item.description,
+        quantity: item.quantity,
+        price: item.unitPrice,
+        total: item.total
+      })),
+      subtotal: calculateSubtotal(),
+      tax: calculateTax(),
+      total: calculateTotal(),
+      status: 'pending'
+    };
+
+    // Call the parent component's handler
+    onCreateInvoice(newInvoice);
     
-    onClose();
+    // Reset form
+    setSelectedClientId("");
+    setInvoiceItems([
+      { id: "item1", productId: "", description: "", quantity: 1, unitPrice: 0, total: 0 },
+    ]);
+    setDueDate(format(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), "yyyy-MM-dd"));
   };
 
   return (
